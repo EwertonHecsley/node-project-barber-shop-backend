@@ -9,3 +9,34 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Expert {
+  id    Int     @id @default(autoincrement())
+  name  String
+  email String  @unique
+  phone String?
+  Queue Queue[]
+
+  @@map("experts")
+}
+
+model Queue {
+  id            Int             @id @default(autoincrement())
+  createdAt     DateTime        @default(now()) @db.Date()
+  expert        Expert          @relation(fields: [expertId], references: [id])
+  expertId      Int
+  QueueCustomer QueueCustomer[]
+
+  @@map("queues")
+}
+
+model QueueCustomer {
+  id         Int     @id @default(autoincrement())
+  queue      Queue   @relation(fields: [queueId], references: [id])
+  queueId    Int
+  name       String
+  service    String
+  isAwaiting Boolean @default(true)
+
+  @@map("queuecustumers")
+}
