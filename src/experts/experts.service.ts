@@ -2,6 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/dataBase/prisma.service';
 import CreateExpertsDto from './dto/create.experts';
+import UpdateExpertDto from './dto/update.experts';
 
 @Injectable()
 export class ExpertsService {
@@ -31,4 +32,14 @@ export class ExpertsService {
             }
         })
     };
-}
+
+    async updateExpert(id: string, data: UpdateExpertDto) {
+        const id_number = parseInt(id);
+        await this.prisma.expert.update({
+            where: {
+                id: id_number
+            },
+            data
+        })
+    };
+};

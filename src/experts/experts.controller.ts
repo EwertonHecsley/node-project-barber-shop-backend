@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Body, Controller, HttpStatus, Post, Res, Get, Param, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpStatus, Post, Res, Get, Param, NotFoundException, Patch } from '@nestjs/common';
 import { ExpertsService } from './experts.service';
 import CreateExpertsDto from './dto/create.experts';
 import { Response } from 'express';
+import UpdateExpertDto from './dto/update.experts';
 
 @Controller('experts')
 export class ExpertsController {
@@ -27,13 +28,24 @@ export class ExpertsController {
 
   @Get(':id')
   async getExpertById(@Param('id') id: string, @Res() res: Response) {
-    const existeExpertId = await this.expertsService.findExpertById(id);
+    const expert = await this.expertsService.findExpertById(id);
+    if (!expert) throw new NotFoundException('Usuáro não encontrado com esse ID.');
 
-    if (!existeExpertId) throw new NotFoundException('Usuáro não encontrado com esse ID.');
-
-    return res.status(HttpStatus.OK).json(existeExpertId);
+    return res.status(HttpStatus.OK).json(expert);
   }
 
+  @Patch(':id')
+  async updateExpert(@Param('id') id: string, @Body() data: UpdateExpertDto, @Res() res: Response) {
+    const expert = await this.expertsService.findExpertById(id);
+    if (!expert) throw new NotFoundException('Usuário não encontrado com esse ID.');
 
+    if (data.email) {
+      const emailExist = await this.expertsService.findEmailExpert(data.email);
+      if (emailExist) throw new BadRequestException('Já existe um usuário com email informado.');
+    }
+
+    await this.expertsService.updateExpert(id, data);
+    return res.status(HttpStatus.NO_CONTENT).send();
+  }
 
 }
