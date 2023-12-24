@@ -13,13 +13,22 @@ export class ExpertsService {
                 email
             }
         })
-    }
+    };
 
     async createExpert(data: CreateExpertsDto) {
         return await this.prisma.expert.create({ data })
-    }
+    };
 
     async findAllExperts() {
         return await this.prisma.expert.findMany();
-    }
+    };
+
+    async findExpertById(id: string) {
+        const id_number = parseInt(id);
+        return await this.prisma.expert.findFirst({
+            where: {
+                id: id_number
+            }
+        })
+    };
 }
