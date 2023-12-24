@@ -33,4 +33,10 @@ export class QueuesController {
     const queues = await this.queuesService.getAllQueues();
     return res.json(queues);
   };
+
+  @Get('today')
+  async getQueuesToday(@Res() res: Response) {
+    const queues = await this.queuesService.getQueuesToday();
+    return res.json(queues);
+  };
 }
