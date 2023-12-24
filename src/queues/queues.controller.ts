@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Body, Controller, HttpStatus, NotFoundException, Post, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpStatus, NotFoundException, Post, Query, Res } from '@nestjs/common';
 import { QueuesService } from './queues.service';
 import CreateQueueDto from './dto/create.queue';
 import { Response } from 'express';
@@ -19,5 +19,18 @@ export class QueuesController {
 
     const queue = await this.queuesService.createQueue(data);
     return res.status(HttpStatus.CREATED).json(queue);
-  }
+  };
+
+  @Get(':expertId')
+  async getExpertQueues(@Query('expertId') expertId: number, @Res() res: Response) {
+    if (expertId) {
+      const expert = await this.expertService.findExpertById(expertId.toString());
+      if (!expert) throw new NotFoundException('O expert não existe.');
+
+      const queues = await this.queuesService.getExpertsQueues(expertId);
+      return res.json(queues);
+    };
+    const queues = await this.queuesService.getAllQueues();
+    return res.json(queues);
+  };
 }
