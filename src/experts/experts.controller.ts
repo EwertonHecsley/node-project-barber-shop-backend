@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpStatus, Post, Res, Get } from '@nestjs/common';
 import { ExpertsService } from './experts.service';
 import CreateExpertsDto from './dto/create.experts';
 import { Response } from 'express';
@@ -17,6 +17,14 @@ export class ExpertsController {
     const expert = await this.expertsService.createExpert(data);
 
     return res.status(HttpStatus.CREATED).json(expert);
+  };
+
+  @Get()
+  async getAllExperts(@Res() res: Response) {
+    const listExperts = await this.expertsService.findAllExperts();
+    return res.json(listExperts);
   }
+
+
 
 }
