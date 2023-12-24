@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, HttpStatus, NotFoundException, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpStatus, NotFoundException, Param, Patch, Post, Res } from '@nestjs/common';
 import { QueuesCustumerService } from './queues-custumer.service';
 import CreateQueuesCustomerDto from './dto/create.queues-costumer';
 import { Response } from 'express';
@@ -20,4 +20,13 @@ export class QueuesCustumerController {
     });
     return res.status(HttpStatus.CREATED).json(customer);
   };
-}
+
+  @Patch(':id')
+  async attendCustomer(@Param('id') id: string, @Res() res: Response) {
+    const customer = await this.queuesCustumerService.findCustomer(Number(id));
+    if (!customer) throw new NotFoundException('O cliente não existe.');
+
+    await this.queuesCustumerService.attendCustomer(customer.id);
+    return res.status(HttpStatus.NO_CONTENT).send();
+  };
+};
